@@ -32,7 +32,8 @@ def ring_potential_grid(y_grid, z_grid, x0=0.0, a=1.0, q=1.0, n_phi=720):
     
     # 如果输入是1D数组，创建2D网格
     if y_arr.ndim == 1 and z_arr.ndim == 1:
-        Y, Z = np.meshgrid(y_arr, z_arr, indexing='ij')
+        # 使用默认 indexing='xy'，确保形状为 (len(zs), len(ys))
+        Y, Z = np.meshgrid(y_arr, z_arr)
         ny, nz = Y.shape
     elif y_arr.ndim == 2 and z_arr.ndim == 2:
         Y, Z = y_arr, z_arr
@@ -56,7 +57,5 @@ def axis_potential_analytic(z, a=1.0, q=1.0):
     圆环轴线上（x=y=0）电势的解析解。
     
     解析公式: V(0,0,z) = q / sqrt(a^2 + z^2)
-    
-    这是用于验证数值计算正确性的参考解。
     """
     return q / np.sqrt(a * a + z * z)
