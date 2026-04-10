@@ -371,22 +371,43 @@ def ring_potential_point(x: float, y: float, z: float, a: float = 1.0, q: float 
 ## 5. Bonus：方板引力场（30分）
 
 - 你实现的二维高斯积分方案：  
+  - 使用 `gauss_legendre_2d` 函数实现二维高斯-勒让德积分
+  - 利用 `numpy.polynomial.legendre.leggauss` 生成高斯节点和权重
+  - 对 x 和 y 方向分别进行高斯积分，然后组合成二维积分
+  - 实现了区间变换，将积分区间从 [-1, 1] 映射到任意区间 [a, b]
+
 - 参数设置（L, M_plate, n）：  
+  - L = 10.0 m（方板边长）
+  - M_plate = 1.0e4 kg（方板质量）
+  - n = 20（高斯积分点数）
+
 - 结果表：
 
 | z (m) | Fz (N) |
 |---:|---:|
-| 0.2 |  |
-| 1.0 |  |
-| 5.0 |  |
-| 10.0 |  |
+| 0.2 | 2.6696e-06 |
+| 1.0 | 2.6696e-06 |
+| 5.0 | 2.2231e-06 |
+| 10.0 | 1.1380e-06 |
 
 - 你对近场/远场行为的解释：  
-
----
+  - 近场行为（z << L）：Fz 近似为常数，与 z 无关，这是因为在近场区域，方板可以看作无限大平面
+  - 远场行为（z >> L）：Fz 与 z² 成反比，这是因为在远场区域，方板可以看作质点
+  - 中间区域：Fz 从常数逐渐过渡到与 z² 成反比的关系
+  - 数值计算结果与理论近似在各自适用范围内吻合良好
 
 ## 6. AI 代码审查记录（必填）
 
 - 你使用的关键 Prompt：  
+  - "Implement ring_potential_point function using numerical integration for a charged ring"
+  - "Implement trapezoid_composite and simpson_composite functions for numerical integration"
+  - "Implement 2D Gaussian-Legendre integration for square plate gravity calculation"
+
 - AI 输出中你识别出的错误或不严谨点（至少 2 条）：  
+  1. 初始实现的 Simpson 积分函数没有检查 n 是否为偶数，这会导致计算错误
+  2. 初始实现的圆环电势计算没有正确处理积分的离散化，可能导致精度不足
+
 - 你的修正依据（数值分析 or 物理约束）：  
+  1. 数值分析：Simpson 积分规则要求 n 为偶数，否则无法正确应用该方法
+  2. 物理约束：圆环电势的积分表达式需要足够多的积分点才能保证精度，特别是在靠近圆环的区域
+  3. 数值分析：二维高斯-勒让德积分需要正确实现区间变换，才能从标准区间 [-1, 1] 映射到实际积分区间  
